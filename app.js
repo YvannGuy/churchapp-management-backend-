@@ -8,8 +8,9 @@ const app = express();
 require("./config")(app);
 
 // 👇 Commencer à gérer les routes ici
-app.use("/api/events", require("./routes/event.routes"));  // Routes pour les événements
-app.use("/api/donations", require("./routes/donation.routes"));  // Routes pour les donations
+app.use("/api", require("./routes/index.routes"));
+app.use("/api", require("./routes/event.routes"));  // Routes pour les événements
+app.use("/api", require("./routes/donation.routes"));  // Routes pour les donations
 app.use("/auth", require("./routes/auth.routes"));  // Routes d'authentification
 
 // Gestion des erreurs globales

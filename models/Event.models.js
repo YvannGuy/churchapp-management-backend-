@@ -25,14 +25,6 @@ const eventSchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now,
-    },
 });
 
 // Mettre à jour `updatedAt` à chaque fois qu'un événement est mis à jour

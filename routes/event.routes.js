@@ -1,27 +1,37 @@
 const express = require("express");
 const Event = require("../models/Event.models");
+const User = require("../models/User.model");
 const { isAuthenticated } = require("../middleware/jwt.middleware"); // Assurez-vous d'importer la middleware d'authentification
 const router = express.Router();
 
 // Middleware pour vérifier que l'utilisateur est un admin
 const isAdmin = (req, res, next) => {
-    if (req.payload.role !== "ADMIN") {
-        return res.status(403).json({ message: "Access denied. Only admins are allowed." });
-    }
-    next();
+
+    const userId = req.payload._id;
+
+    User.findById(userId)
+        .then((userDetails) => {
+            if(userDetails.role === "ADMIN") {
+                next(); // continue
+            } else  {
+                return res.status(403).json({ message: "Access denied. Only admins are allowed." });
+            }
+        })
+        .catch((err) => res.status(500).json({ message: "Access denied." }));
+
 };
 
 
 // CREATE (POST) /api/events - Créer un nouvel événement
 router.post("/events", isAuthenticated, isAdmin, (req, res) => {
-    const { title, description, date } = req.body;
+    const { title, description, date, location } = req.body;
     const createdBy = req.payload._id; // Utiliser l'id de l'utilisateur connecté
 
     if (!title || !description || !date) {
         return res.status(400).json({ message: "All fields are required" });
     }
 
-    Event.create({ title, description, date, createdBy })
+    Event.create({ title, description, date, location, createdBy })
         .then((newEvent) => res.status(201).json(newEvent))
         .catch((err) => {
             console.error("Error creating event:", err.message); // Affiche l'erreur dans la console
